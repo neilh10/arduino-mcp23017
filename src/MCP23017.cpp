@@ -1,5 +1,6 @@
 #include "MCP23017.h"
-
+#define _BV(bit) 	(1 << (bit))
+ 
 MCP23017::MCP23017(uint8_t address, TwoWire& bus) {
 	_deviceAddr = address;
 	_bus = &bus;
@@ -19,7 +20,7 @@ void MCP23017::init()
 	writeRegister(MCP23017_REGISTER::IOCON, 0b00100000);
 
 	//enable all pull up resistors (will be effective for input pins only)
-	writeRegister(MCP23017_REGISTER::GPPUA, 0xFF, 0xFF);
+	//writeRegister(MCP23017_REGISTER::GPPUA, 0xFF, 0xFF);
 }
 
 void MCP23017::portMode(MCP23017_PORT port, uint8_t value)
