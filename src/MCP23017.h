@@ -76,7 +76,7 @@ public:
 	 * 
 	 * See "3.2.1 Byte mode and Sequential mode".
 	 */
-	void init();
+	size_t init();
 	/**
 	 * Controls the pins direction on a whole port at once.
 	 * 
@@ -85,7 +85,7 @@ public:
 	 * 
 	 * See "3.5.1 I/O Direction register".
 	 */
-	void portMode(MCP23017_PORT port, uint8_t value);
+	size_t portMode(MCP23017_PORT port, uint8_t value);
 	/**
 	 * Controls a single pin direction. 
 	 * Pin 0-7 for port A, 8-15 fo port B.
@@ -95,7 +95,7 @@ public:
 	 *
 	 * See "3.5.1 I/O Direction register".
 	 */
-	void pinMode(uint8_t pin, uint8_t mode);
+	size_t pinMode(uint8_t pin, uint8_t mode);
 
 	/**
 	 * Writes a single pin state.
@@ -106,7 +106,7 @@ public:
 	 * 
 	 * See "3.5.10 Port register".
 	 */
-	void digitalWrite(uint8_t pin, uint8_t state);
+	size_t digitalWrite(uint8_t pin, uint8_t state);
 	/**
 	 * Reads a single pin state.
 	 * Pin 0-7 for port A, 8-15 for port B.
@@ -126,7 +126,7 @@ public:
 	 * 
 	 * See "3.5.10 Port register".
 	 */
-	void writePort(MCP23017_PORT port, uint8_t value);
+	size_t writePort(MCP23017_PORT port, uint8_t value);
 	/**
 	 * Writes pins state to both ports.
 	 * 
@@ -135,7 +135,7 @@ public:
 	 * 
 	 * See "3.5.10 Port register".
 	 */
-	void write(uint16_t value);
+	size_t write(uint16_t value);
 
 	/**
 	 * Reads pins state for a whole port.
@@ -158,8 +158,9 @@ public:
 
 	/**
 	 * Writes a single register value.
+	 * return 0 if pass, !0 if failed
 	 */
-	void writeRegister(MCP23017_REGISTER reg, uint8_t value);
+	size_t writeRegister(MCP23017_REGISTER reg, uint8_t value);
 	/**
 	 * Writes values to a register pair.
 	 * 
@@ -167,7 +168,7 @@ public:
 	 * you have to supply a portA register address to reg. Otherwise, values
 	 * will be reversed due to the way the MCP23017 works in Byte mode.
 	 */
-	void writeRegister(MCP23017_REGISTER reg, uint8_t portA, uint8_t portB);
+	size_t writeRegister(MCP23017_REGISTER reg, uint8_t portA, uint8_t portB);
 	/**
 	 * Reads a single register value.
 	 */
@@ -180,7 +181,16 @@ public:
 	 * will be reversed due to the way the MCP23017 works in Byte mode.
 	 */
 	void readRegister(MCP23017_REGISTER reg, uint8_t& portA, uint8_t& portB);
-
+	// Based on  wire.cpp endTransmission errors
+	enum MCP23017_ERRORS : uint8_t
+	{
+		mcpErr_Sucess = 0,
+		//  1 : Data too long
+		//  2 : NACK on transmit of address
+		//  3 : NACK on transmit of data
+		//  4 : Other error
+		mcpErr_SeqErrBit =0x80, //Bit is set
+	};
 #ifdef _MCP23017_INTERRUPT_SUPPORT_
 
 	/**
@@ -191,16 +201,16 @@ public:
 	 * Controls the IOCON.MIRROR bit. 
 	 * See "3.5.6 Configuration register".
 	 */
-	void interruptMode(MCP23017_INTMODE intMode);
+	size_t interruptMode(MCP23017_INTMODE intMode);
 	/**
 	 * Configures interrupt registers using an Arduino-like API.
 	 * mode can be one of CHANGE, FALLING or RISING.
 	 */
-	void interrupt(MCP23017_PORT port, uint8_t mode);
+	size_t interrupt(MCP23017_PORT port, uint8_t mode);
 	/**
 	 * Disable interrupts for the specified port.
 	 */
-	void disableInterrupt(MCP23017_PORT port);
+	size_t disableInterrupt(MCP23017_PORT port);
 	/**
 	 * Reads which pin caused the interrupt.
 	 */
